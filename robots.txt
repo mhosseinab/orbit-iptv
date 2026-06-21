@@ -1,0 +1,7 @@
+# robots.txt — Orbit IPTV
+User-agent: *
+Allow: /
+# The proxy is a runtime endpoint, not content — keep it out of the index.
+Disallow: /proxy
+
+Sitemap: https://orbit-iptv.pages.dev/sitemap.xml

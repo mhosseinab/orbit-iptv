@@ -1,0 +1,12 @@
+# Cloudflare Pages headers — https://developers.cloudflare.com/pages/configuration/headers/
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: picture-in-picture=(self), fullscreen=(self)
+  # connect-src/media-src/img-src must stay open: streams + logos come from thousands of arbitrary hosts.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src * data: blob:; media-src * blob: data:; connect-src *; font-src 'self' data:; frame-ancestors 'self'; base-uri 'self'
+
+# Always revalidate the app shell so redeploys show up immediately.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate

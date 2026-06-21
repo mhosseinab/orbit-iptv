@@ -1,0 +1,14 @@
+{
+  "name": "orbit-iptv",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static IPTV landing page (iptv-org) with search, categories, geo-block detection, and an optional on-demand CORS/header proxy as a Cloudflare Pages Function.",
+  "scripts": {
+    "dev": "wrangler pages dev .",
+    "deploy": "wrangler pages deploy . --project-name orbit-iptv"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}
