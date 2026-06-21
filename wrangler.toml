@@ -9,7 +9,7 @@ pages_build_output_dir = "."
 #   "1" or unset = proxy ON  (blocked streams auto-retry through it)
 #   "0"          = proxy OFF (the player detects this and runs direct-only)
 # Can also be overridden per-environment in the Pages dashboard without redeploying.
-PROXY_ENABLED = "1"
+PROXY_ENABLED = "0"
 
 # Allow other websites to call the proxy (turns it into an open proxy).
 # Keep "0" on public deploys to block cross-site abuse. "1" disables the check.
