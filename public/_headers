@@ -1,0 +1,15 @@
+# Cloudflare Pages headers — https://developers.cloudflare.com/pages/configuration/headers/
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: picture-in-picture=(self), fullscreen=(self)
+  # script-src is 'self' now that hls.js is bundled (no CDN). worker-src blob: is
+  # required for hls.js's transmuxing web worker. connect/media/img-src stay open:
+  # streams + logos come from thousands of arbitrary hosts. style 'unsafe-inline'
+  # covers React inline style attributes.
+  Content-Security-Policy: default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src * data: blob:; media-src * blob: data:; connect-src *; font-src 'self' data:; frame-ancestors 'self'; base-uri 'self'
+
+# Always revalidate the app shell so redeploys show up immediately.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate

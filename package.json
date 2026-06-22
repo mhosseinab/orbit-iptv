@@ -3,12 +3,29 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Static IPTV landing page (iptv-org) with search, categories, geo-block detection, and an optional on-demand CORS/header proxy as a Cloudflare Pages Function.",
+  "description": "Web player for 12,500+ free live TV channels (iptv-org) with search, filters, geo-block detection, and an optional on-demand CORS/header proxy as a Cloudflare Pages Function.",
   "scripts": {
-    "dev": "wrangler pages dev .",
-    "deploy": "wrangler pages deploy . --project-name orbit-iptv"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "pages:dev": "vite build && wrangler pages dev dist",
+    "deploy": "vite build && wrangler pages deploy dist --project-name orbit-iptv"
+  },
+  "dependencies": {
+    "@tanstack/react-virtual": "^3.13.0",
+    "hls.js": "^1.5.17",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^3.2.6",
     "wrangler": "^3.90.0"
   }
 }

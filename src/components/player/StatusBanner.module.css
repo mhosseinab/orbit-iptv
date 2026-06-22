@@ -1,0 +1,45 @@
+.banner {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px solid var(--line-2);
+  background: var(--bg-2);
+}
+
+.icon {
+  flex: none;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.text strong {
+  color: var(--fg);
+}
+.text {
+  color: var(--fg-dim);
+}
+
+.geo {
+  border-color: color-mix(in srgb, var(--geo) 45%, transparent);
+  background: color-mix(in srgb, var(--geo) 10%, var(--bg-2));
+}
+.restrict {
+  border-color: color-mix(in srgb, var(--restrict) 45%, transparent);
+  background: color-mix(in srgb, var(--restrict) 10%, var(--bg-2));
+}
+.cors,
+.fail {
+  border-color: color-mix(in srgb, var(--bad) 45%, transparent);
+  background: color-mix(in srgb, var(--bad) 10%, var(--bg-2));
+}
+.offline {
+  border-color: color-mix(in srgb, var(--offline) 45%, transparent);
+  background: color-mix(in srgb, var(--offline) 10%, var(--bg-2));
+}
+.info {
+  border-color: color-mix(in srgb, var(--info) 45%, transparent);
+  background: color-mix(in srgb, var(--info) 10%, var(--bg-2));
+}

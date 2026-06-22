@@ -1,0 +1,37 @@
+.scroller {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-2);
+  contain: strict;
+}
+
+.spacer {
+  position: relative;
+  width: 100%;
+}
+
+.rowWrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--row-h);
+  padding: 0 2px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-6) var(--sp-4);
+  text-align: center;
+  color: var(--fg-mute);
+}
+.empty p {
+  color: var(--fg-dim);
+  font-weight: 500;
+}
+.empty span {
+  font-size: 12px;
+}

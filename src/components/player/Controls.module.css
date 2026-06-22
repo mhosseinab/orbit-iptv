@@ -1,0 +1,84 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.btn {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-sm);
+  color: var(--fg-dim);
+}
+.btn:hover {
+  color: var(--fg);
+  background: var(--bg-3);
+}
+
+.volume {
+  width: 90px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: var(--sp-2);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--fg-mute);
+}
+.liveOn {
+  color: var(--bad);
+}
+.liveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.liveOn .liveDot {
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.spacer {
+  flex: 1;
+}
+
+.quality {
+  appearance: none;
+  height: 32px;
+  padding: 0 10px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--fg);
+  font-size: 12px;
+  cursor: pointer;
+}
+.quality:hover {
+  border-color: var(--line-2);
+}
+
+@media (max-width: 600px) {
+  .volume {
+    width: 60px;
+  }
+  .live {
+    display: none;
+  }
+}
