@@ -13,6 +13,7 @@ type IconName =
   | "external"
   | "close"
   | "filter"
+  | "chevron"
   | "tv";
 
 const PATHS: Record<IconName, JSX.Element> = {
@@ -49,6 +50,7 @@ const PATHS: Record<IconName, JSX.Element> = {
   external: <path d="M14 4h6v6h-2V7.4l-7.3 7.3-1.4-1.4L16.6 6H14V4ZM5 5h5v2H7v10h10v-3h2v5H5V5Z" />,
   close: <path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6 6.4 5Z" />,
   filter: <path d="M3 5h18v2l-7 7v5l-4 2v-7L3 7V5Z" />,
+  chevron: <path d="M6 9l6 6 6-6-1.4-1.4L12 12.2 7.4 7.6 6 9Z" />,
   tv: <path d="M3 6h18v12H3V6Zm2 2v8h14V8H5Zm4-5 3 3 3-3h2l-4 4h-2L7 3h2Z" />,
 };
 

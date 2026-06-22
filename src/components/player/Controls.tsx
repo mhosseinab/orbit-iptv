@@ -1,4 +1,4 @@
-import { useEffect, useState, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { Icon } from "../common/Icon";
 import type { LevelOption } from "../../hooks/useHlsPlayer";
 import styles from "./Controls.module.css";
@@ -16,6 +16,10 @@ export function Controls({ videoRef, shellRef, levels, level, onSetLevel, onToas
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [volume, setVolume] = useState(1);
+  const [qualityOpen, setQualityOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState({ up: false, maxH: 260 });
+  const qualityRef = useRef<HTMLDivElement>(null);
+  const qualityBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -36,6 +40,34 @@ export function Controls({ videoRef, shellRef, levels, level, onSetLevel, onToas
       v.removeEventListener("volumechange", onVol);
     };
   }, [videoRef]);
+
+  // On open, drop in whichever direction has more room and cap the height to fit
+  // — the player can be pinned to the top (mobile) or bottom (fullscreen).
+  useLayoutEffect(() => {
+    if (!qualityOpen) return;
+    const r = qualityBtnRef.current?.getBoundingClientRect();
+    if (!r) return;
+    const below = window.innerHeight - r.bottom - 12;
+    const above = r.top - 12;
+    const up = above > below;
+    setMenuPos({ up, maxH: Math.max(120, Math.min(260, up ? above : below)) });
+  }, [qualityOpen]);
+
+  useEffect(() => {
+    if (!qualityOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (!qualityRef.current?.contains(e.target as Node)) setQualityOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setQualityOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [qualityOpen]);
 
   const togglePlay = () => {
     const v = videoRef.current;
@@ -102,18 +134,44 @@ export function Controls({ videoRef, shellRef, levels, level, onSetLevel, onToas
       <div className={styles.spacer} />
 
       {levels.length > 0 && (
-        <select
-          className={styles.quality}
-          value={level}
-          onChange={(e) => onSetLevel(parseInt(e.target.value, 10))}
-          aria-label="Quality"
-        >
-          {levels.map((l) => (
-            <option key={l.value} value={l.value}>
-              {l.label}
-            </option>
-          ))}
-        </select>
+        <div className={styles.quality} ref={qualityRef}>
+          <button
+            ref={qualityBtnRef}
+            type="button"
+            className={styles.qualityBtn}
+            onClick={() => setQualityOpen((o) => !o)}
+            aria-haspopup="listbox"
+            aria-expanded={qualityOpen}
+            aria-label="Quality"
+          >
+            {levels.find((l) => l.value === level)?.label ?? levels[0].label}
+            <Icon name="chevron" size={14} />
+          </button>
+          {qualityOpen && (
+            <ul
+              className={`${styles.qualityMenu} ${menuPos.up ? styles.menuUp : styles.menuDown}`}
+              style={{ maxHeight: menuPos.maxH }}
+              role="listbox"
+            >
+              {levels.map((l) => (
+                <li key={l.value}>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={l.value === level}
+                    className={`${styles.qualityItem} ${l.value === level ? styles.qualityActive : ""}`}
+                    onClick={() => {
+                      onSetLevel(l.value);
+                      setQualityOpen(false);
+                    }}
+                  >
+                    {l.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
 
       <button className={styles.btn} onClick={togglePip} aria-label="Picture in picture">
