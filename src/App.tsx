@@ -14,19 +14,11 @@ import { useToast } from "./hooks/useToast";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 import { useHlsPlayer } from "./hooks/useHlsPlayer";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
+import { useUrlState } from "./hooks/useUrlState";
 import { filterAndSort } from "./lib/filter";
-import type { Filters, Status, StreamRecord } from "./types/iptv";
+import { parseAppUrl, shareUrl } from "./lib/url";
+import type { Status, StreamRecord } from "./types/iptv";
 import styles from "./App.module.css";
-
-const INITIAL_FILTERS: Filters = {
-  q: "",
-  cat: "",
-  country: "",
-  lang: "",
-  qual: "",
-  status: "",
-  sort: "name",
-};
 
 export default function App() {
   const data = useIptvData();
@@ -37,8 +29,9 @@ export default function App() {
   const { toast, showToast } = useToast();
   const isMobile = useMediaQuery("(max-width: 980px)");
 
-  const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
-  const [searchText, setSearchText] = useState("");
+  const [initialUrl] = useState(() => parseAppUrl(window.location.search));
+  const [filters, setFilters] = useState(initialUrl.filters);
+  const [searchText, setSearchText] = useState(initialUrl.filters.q);
   const [current, setCurrent] = useState<StreamRecord | null>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -156,10 +149,30 @@ export default function App() {
     [showToast],
   );
 
+  const onShare = useCallback(
+    (record: StreamRecord) => {
+      navigator.clipboard
+        .writeText(shareUrl(window.location.origin, record))
+        .then(() => showToast("Channel link copied"))
+        .catch(() => showToast("Copy failed"));
+    },
+    [showToast],
+  );
+
   const onRefresh = useCallback(() => {
     data.reload();
     showToast("Refreshing playlist…");
   }, [data, showToast]);
+
+  // Sync filters + selection to the URL (shareable, refresh-persistent) and
+  // resolve a shared ?ch=/?u= deep link once channel data has loaded.
+  useUrlState({
+    pending: { channelId: initialUrl.channelId, streamUrl: initialUrl.streamUrl },
+    records: data.records,
+    filters,
+    current,
+    onSelect,
+  });
 
   // ---- keyboard shortcuts ----
   const onNav = useCallback(
@@ -271,6 +284,7 @@ export default function App() {
       fav={currentFav}
       onToggleFav={toggleFav}
       onCopy={onCopy}
+      onShare={onShare}
       onToast={showToast}
       onAbout={() => setAboutOpen(true)}
     />

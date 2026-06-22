@@ -115,15 +115,13 @@ export interface Enrichment {
   langCounts: Map<string, number>;
 }
 
-export type StatusFilter =
-  | ""
-  | "playable"
-  | "geo"
-  | "restricted"
-  | "fav"
-  | "recent";
+// Single source of truth: the union types are derived from these value arrays,
+// which double as the allow-lists when validating URL params (see lib/url).
+export const STATUS_VALUES = ["", "playable", "geo", "restricted", "fav", "recent"] as const;
+export type StatusFilter = (typeof STATUS_VALUES)[number];
 
-export type SortKey = "name" | "country" | "quality" | "status";
+export const SORT_VALUES = ["name", "country", "quality", "status"] as const;
+export type SortKey = (typeof SORT_VALUES)[number];
 
 export interface Filters {
   q: string;

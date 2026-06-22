@@ -22,6 +22,7 @@ interface Props {
   fav: boolean;
   onToggleFav: (url: string) => void;
   onCopy: (url: string) => void;
+  onShare: (record: StreamRecord) => void;
   onToast: (msg: string) => void;
   onAbout: () => void;
 }
@@ -41,6 +42,7 @@ export function PlayerStage({
   fav,
   onToggleFav,
   onCopy,
+  onShare,
   onToast,
   onAbout,
 }: Props) {
@@ -97,6 +99,7 @@ export function PlayerStage({
           fav={fav}
           onToggleFav={onToggleFav}
           onCopy={onCopy}
+          onShare={onShare}
         />
       )}
     </section>

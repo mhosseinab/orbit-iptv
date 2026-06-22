@@ -10,6 +10,7 @@ type IconName =
   | "fullscreen"
   | "star"
   | "copy"
+  | "share"
   | "external"
   | "close"
   | "filter"
@@ -47,6 +48,14 @@ const PATHS: Record<IconName, JSX.Element> = {
     />
   ),
   copy: <path d="M9 3h10v14h-2V5H9V3Zm-4 4h10v14H5V7Zm2 2v10h6V9H7Z" />,
+  share: (
+    <>
+      <circle cx="18" cy="5" r="2.6" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="6" cy="12" r="2.6" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="18" cy="19" r="2.6" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M8.4 10.7l7.2-4.4M8.4 13.3l7.2 4.4" fill="none" stroke="currentColor" strokeWidth="1.8" />
+    </>
+  ),
   external: <path d="M14 4h6v6h-2V7.4l-7.3 7.3-1.4-1.4L16.6 6H14V4ZM5 5h5v2H7v10h10v-3h2v5H5V5Z" />,
   close: <path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6 6.4 5Z" />,
   filter: <path d="M3 5h18v2l-7 7v5l-4 2v-7L3 7V5Z" />,

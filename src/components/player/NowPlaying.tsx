@@ -10,9 +10,10 @@ interface Props {
   fav: boolean;
   onToggleFav: (url: string) => void;
   onCopy: (url: string) => void;
+  onShare: (record: StreamRecord) => void;
 }
 
-export function NowPlaying({ record, logo, langName, fav, onToggleFav, onCopy }: Props) {
+export function NowPlaying({ record, logo, langName, fav, onToggleFav, onCopy, onShare }: Props) {
   const meta: string[] = [];
   if (record.flag || record.country) meta.push(`${record.flag ? record.flag + " " : ""}${record.country}`.trim());
   if (record.catName) meta.push(record.catName);
@@ -41,6 +42,9 @@ export function NowPlaying({ record, logo, langName, fav, onToggleFav, onCopy }:
           aria-label={fav ? "Remove favorite" : "Add favorite"}
         >
           <Icon name="star" size={18} fill={fav ? "currentColor" : "none"} />
+        </button>
+        <button className={styles.action} onClick={() => onShare(record)} aria-label="Share channel link">
+          <Icon name="share" size={18} />
         </button>
         <button className={styles.action} onClick={() => onCopy(record.url)} aria-label="Copy stream URL">
           <Icon name="copy" size={18} />
