@@ -16,7 +16,7 @@ import { useHlsPlayer } from "./hooks/useHlsPlayer";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useUrlState } from "./hooks/useUrlState";
 import { filterAndSort } from "./lib/filter";
-import { parseAppUrl, shareUrl } from "./lib/url";
+import { parseAppUrl, shareUrl, type ParsedUrl } from "./lib/url";
 import type { Status, StreamRecord } from "./types/iptv";
 import styles from "./App.module.css";
 
@@ -164,14 +164,32 @@ export default function App() {
     showToast("Refreshing playlist…");
   }, [data, showToast]);
 
-  // Sync filters + selection to the URL (shareable, refresh-persistent) and
-  // resolve a shared ?ch=/?u= deep link once channel data has loaded.
+  // Re-apply full app state on Back/Forward. Selection is set directly (not via
+  // onSelect) so history navigation doesn't reorder recents or scroll mobile.
+  const onRestore = useCallback(
+    (p: ParsedUrl) => {
+      setFilters(p.filters);
+      setSearchText(p.filters.q);
+      const hit = p.channelId
+        ? data.records.find((r) => r.ch === p.channelId)
+        : p.streamUrl
+          ? data.records.find((r) => r.url === p.streamUrl)
+          : undefined;
+      setCurrent(hit ?? null);
+    },
+    [data.records],
+  );
+
+  // Sync filters + selection to the URL (shareable, refresh-persistent),
+  // resolve a shared ?ch=/?u= deep link once channel data has loaded, and
+  // restore state on Back/Forward.
   useUrlState({
     pending: { channelId: initialUrl.channelId, streamUrl: initialUrl.streamUrl },
     records: data.records,
     filters,
     current,
     onSelect,
+    onRestore,
   });
 
   // ---- keyboard shortcuts ----

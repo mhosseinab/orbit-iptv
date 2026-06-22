@@ -72,6 +72,21 @@ export function channelMeta(record: StreamRecord, baseOrigin: string): ChannelMe
   };
 }
 
+// Decides how a state→URL write should touch history. The first write of a
+// session replaces (establishing a back-able baseline at the loaded URL); a
+// changed URL pushes a new entry (so Back undoes it); an unchanged URL skips —
+// which is exactly the case after popstate, since the browser updates location
+// before firing the event, preventing a duplicate forward entry.
+export function navAction(
+  query: string,
+  currentSearch: string,
+  firstWrite: boolean,
+): "replace" | "push" | "skip" {
+  if (firstWrite) return "replace";
+  if (query === currentSearch) return "skip";
+  return "push";
+}
+
 function addSelection(p: URLSearchParams, record: StreamRecord): void {
   if (record.ch) p.set("ch", record.ch);
   else p.set("u", record.url);

@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { buildAppQuery, channelMeta } from "../lib/url";
+import { useEffect, useRef, useState } from "react";
+import { buildAppQuery, channelMeta, navAction, parseAppUrl, type ParsedUrl } from "../lib/url";
 import type { Filters, StreamRecord } from "../types/iptv";
 
 interface Args {
@@ -9,6 +9,8 @@ interface Args {
   filters: Filters;
   current: StreamRecord | null;
   onSelect: (record: StreamRecord) => void;
+  // Re-apply full app state when the user navigates history (Back/Forward).
+  onRestore: (parsed: ParsedUrl) => void;
 }
 
 interface HeadDefaults {
@@ -20,16 +22,23 @@ interface HeadDefaults {
 
 // Two-way sync between shareable app state and the URL + document head.
 // Read side resolves a shared ?ch=/?u= once data lands; write side mirrors
-// filters + selection back. The write side stays gated until the read side has
-// run, so the shared param is never stripped during the initial data fetch.
-export function useUrlState({ pending, records, filters, current, onSelect }: Args) {
-  const hydratedRef = useRef(false);
+// filters + selection back, pushing a history entry per change so Back undoes
+// it; a popstate listener re-applies state on history navigation. The write
+// side stays gated until the read side has run, so the shared param is never
+// stripped during the initial data fetch.
+//
+// `hydrated` is state (not a ref) so the first write pass runs at load on both
+// paths — clean and shared-link — consuming `firstWrite` to establish a
+// back-able baseline before any user action pushes.
+export function useUrlState({ pending, records, filters, current, onSelect, onRestore }: Args) {
+  const [hydrated, setHydrated] = useState(false);
+  const firstWriteRef = useRef(true);
   const pendingRef = useRef(pending);
   const defaultsRef = useRef<HeadDefaults | null>(null);
   if (defaultsRef.current === null) defaultsRef.current = captureDefaults();
 
   useEffect(() => {
-    if (hydratedRef.current || records.length === 0) return;
+    if (hydrated || records.length === 0) return;
     const { channelId, streamUrl } = pendingRef.current;
     const hit = channelId
       ? records.find((r) => r.ch === channelId)
@@ -37,15 +46,26 @@ export function useUrlState({ pending, records, filters, current, onSelect }: Ar
         ? records.find((r) => r.url === streamUrl)
         : undefined;
     if (hit) onSelect(hit);
-    hydratedRef.current = true; // resolved or confirmed-absent — unblock writes
-  }, [records, onSelect]);
+    setHydrated(true); // resolved or confirmed-absent — unblock writes
+  }, [hydrated, records, onSelect]);
 
   useEffect(() => {
-    if (!hydratedRef.current) return;
-    const query = buildAppQuery(filters, current);
-    history.replaceState(null, "", query || location.pathname);
+    if (!hydrated) return;
     applyHead(current, defaultsRef.current!);
-  }, [filters, current]);
+    const query = buildAppQuery(filters, current);
+    const action = navAction(query, location.search, firstWriteRef.current);
+    firstWriteRef.current = false;
+    if (action === "skip") return;
+    const url = query || location.pathname;
+    if (action === "replace") history.replaceState(null, "", url);
+    else history.pushState(null, "", url);
+  }, [hydrated, filters, current]);
+
+  useEffect(() => {
+    const onPop = () => onRestore(parseAppUrl(location.search));
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [onRestore]);
 }
 
 function captureDefaults(): HeadDefaults {

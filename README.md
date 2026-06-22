@@ -11,7 +11,7 @@ An open-source, single-page live-TV player for the [iptv-org](https://github.com
 - HLS playback via [hls.js](https://github.com/video-dev/hls.js); direct HLS in Safari
 - Proxy fallback for CORS-blocked / header-restricted / geo-blocked streams
 - Favorites and recently watched (persisted to localStorage)
-- Shareable URLs — full app state lives in the query string
+- Shareable URLs — full app state lives in the query string, with working browser Back/Forward navigation
 
 ## Stack
 

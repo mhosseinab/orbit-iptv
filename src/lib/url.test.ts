@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseAppUrl, buildAppQuery, shareUrl, channelMeta } from "./url";
+import { parseAppUrl, buildAppQuery, shareUrl, channelMeta, navAction } from "./url";
 import type { Filters, StreamRecord } from "../types/iptv";
 
 const DEFAULTS: Filters = {
@@ -124,6 +124,23 @@ describe("shareUrl", () => {
   it("falls back to the raw stream url and ignores filters", () => {
     const url = shareUrl("https://x.dev", rec({ ch: null, url: "http://h/y.m3u8" }));
     expect(parseAppUrl(new URL(url).search).streamUrl).toBe("http://h/y.m3u8");
+  });
+});
+
+describe("navAction", () => {
+  it("replaces on the first write to establish the history baseline", () => {
+    expect(navAction("?ch=A", "?ch=A", true)).toBe("replace");
+    expect(navAction("", "", true)).toBe("replace");
+  });
+
+  it("pushes a new history entry when the url changes", () => {
+    expect(navAction("?ch=B", "?ch=A", false)).toBe("push");
+    expect(navAction("?ch=A", "", false)).toBe("push");
+  });
+
+  it("skips history when the url already matches (e.g. after popstate)", () => {
+    expect(navAction("?ch=A", "?ch=A", false)).toBe("skip");
+    expect(navAction("", "", false)).toBe("skip");
   });
 });
 
